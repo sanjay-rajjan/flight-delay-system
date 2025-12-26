@@ -9,3 +9,12 @@ class Airport(Base):
     name = Column(String)
     city = Column(String)
     country = Column(String)
+
+class Airline(Base):
+    __tablename__ = "airlines"
+
+    id = Column(Integer, primary_key=True, index=True)
+    code = Column(String, unique=True, index=True)
+    name = Column(String)
+
+    

@@ -1,5 +1,5 @@
 from app.database import Base, engine
-from app.models import Airport
+from app.models import Airport, Airline
 
 def create_tables():
     print("Creating database tables")
