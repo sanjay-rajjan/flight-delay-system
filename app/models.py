@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.orm import relationship
 from app.database import Base
 
 class Airport(Base):
@@ -17,4 +18,22 @@ class Airline(Base):
     code = Column(String, unique=True, index=True)
     name = Column(String)
 
+class Flight(Base):
+    __tablename__ = "flights"
+
+    id = Column(Integer, primary_key=True, index=True)
+    flight_number = Column(String, index=True)
+    airline_id = Column(Integer, ForeignKey("airlines.id"))
+    departure_airport_id = Column(Integer, ForeignKey("airports.id"))
+    arrival_airport_id = Column(Integer, ForeignKey("airports.id"))
+    scheduled_departure = Column(DateTime)
+    scheduled_arrival = Column(DateTime)
+
+    # relationships to airlines and airports tables
+    airline = relationship("Airline")
+    departure_airport = relationship("Airport", foreign_keys=[departure_airport_id])
+    arrival_airport = relationship("Airport", foreign_keys=[arrival_airport_id])
     
+
+
+

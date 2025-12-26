@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models import Airport, Airline
+from app.models import Airport, Airline, Flight
 from app import schemas
 
 app = FastAPI(title="Flight Delay Prediction System")
@@ -55,3 +55,35 @@ def create_airline(airline: schemas.AirlineCreate, db: Session = Depends(get_db)
     db.commit()
     db.refresh(new_airline)
     return new_airline
+
+@app.get("/flights")
+def get_flights(db: Session = Depends(get_db)):
+    flights = db.query(Flight).all()
+    return flights
+
+@app.get("/flights/{flight_id}")
+def get_flight(flight_id: int, db: Session = Depends(get_db)):
+    flight = db.query(Flight).filter_by(id=flight_id).first()
+    if not flight:
+        raise HTTPException(status_code=404, detail="Flight not found")
+    return flight
+
+@app.post("/flights", response_model=schemas.Flight)
+def create_flight(flight: schemas.FlightCreate, db: Session = Depends(get_db)):
+    airline = db.query(Airline).filter_by(id=flight.airline_id).first()
+    if not airline:
+        raise HTTPException(status_code=404, detail="Airline not found")
+    
+    dep_airport = db.query(Airport).filter_by(id=flight.departure_airport_id).first()
+    if not dep_airport:
+        raise HTTPException(status_code=404, detail="Departure airport not found")
+    
+    arr_airport = db.query(Airport).filter_by(id=flight.arrival_airport_id).first()
+    if not arr_airport:
+        raise HTTPException(status_code=404, detail="Arrival airport not found")
+    
+    new_flight = Flight(**flight.model_dump())
+    db.add(new_flight)
+    db.commit()
+    db.refresh(new_flight)
+    return new_flight
