@@ -49,7 +49,7 @@ def get_airline(code: str, db: Session = Depends(get_db)):
 def create_airline(airline: schemas.AirlineCreate, db: Session = Depends(get_db)):
     existing = db.query(Airline).filter_by(code=airline.code).first()
     if existing:
-        raise HTTPException(status_code=400, detail="Airport with this code already exists")
+        raise HTTPException(status_code=400, detail="Airline with this code already exists")
     new_airline = Airline(**airline.model_dump())
     db.add(new_airline)
     db.commit()
@@ -70,6 +70,7 @@ def get_flight(flight_id: int, db: Session = Depends(get_db)):
 
 @app.post("/flights", response_model=schemas.Flight)
 def create_flight(flight: schemas.FlightCreate, db: Session = Depends(get_db)):
+    # Check if airline and departure/arrival airports exist
     airline = db.query(Airline).filter_by(id=flight.airline_id).first()
     if not airline:
         raise HTTPException(status_code=404, detail="Airline not found")
@@ -87,3 +88,4 @@ def create_flight(flight: schemas.FlightCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_flight)
     return new_flight
+
