@@ -1,40 +1,16 @@
 # Virtual environment
 venv/
-env/
-ENV/
 
 # Python cache
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
 
 # Environment variables
 .env
-.env.local
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
 
 # macOS
 .DS_Store
 
-# Database
-*.db
-*.sqlite3
-
-# Logs
-*.log
-
-# Model files
-*.pkl
-*.joblib
-models/
-
-# Data files
-data/
+# Model and data files
 *.csv
-*.json
+*.pkl

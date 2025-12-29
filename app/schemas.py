@@ -34,6 +34,10 @@ class FlightBase(BaseModel):
     arrival_airport_id: int
     scheduled_departure: datetime
     scheduled_arrival: datetime
+    actual_departure: datetime | None = None
+    actual_arrival: datetime | None = None
+    delay_minutes: int = 0
+    is_delayed: int = 0
 
 class FlightCreate(FlightBase):
     pass

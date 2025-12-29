@@ -18,7 +18,7 @@ def fetch_airports():
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
         data = response.json()
-        airports_data = data.get('data', [])
+        airports_data = data.get("data", [])
         print(f"Received {len(airports_data)} airports from API")
 
         db = SessionLocal()
@@ -26,14 +26,14 @@ def fetch_airports():
         skipped_count = 0
         
         for airport_data in airports_data:
-            # Fields from API response
-            code = airport_data.get('iata_code')
-            name = airport_data.get('airport_name')
+            #API responses
+            code = airport_data.get("iata_code")
+            name = airport_data.get("airport_name")
             if not code or not name:
                 skipped_count += 1
                 continue
-            city = airport_data.get('city_name')
-            country = airport_data.get('country_name')
+            city = airport_data.get("city_name")
+            country = airport_data.get("country_name")
             existing = db.query(Airport).filter_by(code=code).first()
             if existing:
                 skipped_count += 1
@@ -45,11 +45,8 @@ def fetch_airports():
                 country=country if country else "Unknown" )
             db.add(new_airport)
             added_count += 1
-        
         db.commit()
-        print(f"\n Successfully added {added_count} airports")
-        print(f" Skipped {skipped_count} airports (duplicates or missing data)")
-    
+
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data from API: {e}")
     except Exception as e:

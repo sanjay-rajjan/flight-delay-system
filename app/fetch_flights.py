@@ -13,7 +13,7 @@ def fetch_flights():
 
     print("Fetching flight data")
     url = "http://api.aviationstack.com/v1/flights"
-    params = {"access_key": API_KEY, "limit": 50}
+    params = {"access_key": API_KEY, "limit": 100}
     db = None
 
     try:
@@ -26,12 +26,12 @@ def fetch_flights():
         skipped_count = 0
 
         for flight_data in flights_data:
-            flight_number = flight_data.get('flight', {}).get('iata')
-            airline_code = flight_data.get('airline', {}).get('iata')
-            dep_airport_code = flight_data.get('departure', {}).get('iata')
-            arr_airport_code = flight_data.get('arrival', {}).get('iata')
-            scheduled_dep = flight_data.get('departure', {}).get('scheduled')
-            scheduled_arr = flight_data.get('arrival', {}).get('scheduled')
+            flight_number = flight_data.get("flight", {}).get("iata")
+            airline_code = flight_data.get("airline", {}).get("iata")
+            dep_airport_code = flight_data.get("departure", {}).get("iata")
+            arr_airport_code = flight_data.get("arrival", {}).get("iata")
+            scheduled_dep = flight_data.get("departure", {}).get("scheduled")
+            scheduled_arr = flight_data.get("arrival", {}).get("scheduled")
             
             if not all([flight_number, airline_code, dep_airport_code, arr_airport_code]):
                 skipped_count += 1
@@ -59,15 +59,40 @@ def fetch_flights():
             
             if scheduled_dep:
                 try:
-                    scheduled_departure = datetime.fromisoformat(scheduled_dep.replace('Z', '+00:00'))
+                    scheduled_departure = datetime.fromisoformat(scheduled_dep.replace("Z", "+00:00"))
                 except ValueError:
                     pass
             
             if scheduled_arr:
                 try:
-                    scheduled_arrival = datetime.fromisoformat(scheduled_arr.replace('Z', '+00:00'))
+                    scheduled_arrival = datetime.fromisoformat(scheduled_arr.replace("Z", "+00:00"))
                 except ValueError:
                     pass
+            
+            actual_dep = flight_data.get("departure", {}).get("actual")
+            actual_arr = flight_data.get("arrival", {}).get("actual")
+
+            actual_departure = None
+            actual_arrival = None
+            delay_minutes = 0
+            is_delayed = 0
+
+            if actual_dep:
+                try:
+                    actual_departure = datetime.fromisoformat(actual_dep.replace("Z", "+00:00"))
+                except ValueError:
+                    pass
+
+            if actual_arr:
+                try:
+                    actual_arrival = datetime.fromisoformat(actual_arr.replace("Z", "+00:00"))
+                except ValueError:
+                    pass
+            
+            if scheduled_departure and actual_departure:
+                delay_delta = actual_departure - scheduled_departure
+                delay_minutes = int(delay_delta.total_seconds() / 60)
+                is_delayed = 1 if delay_minutes > 15 else 0
 
             new_flight = Flight(
                 flight_number=flight_number,
@@ -75,15 +100,15 @@ def fetch_flights():
                 departure_airport_id=dep_airport_id,
                 arrival_airport_id=arr_airport_id,
                 scheduled_departure=scheduled_departure,
-                scheduled_arrival=scheduled_arrival
+                scheduled_arrival=scheduled_arrival,
+                actual_departure=actual_departure,
+                actual_arrival=actual_arrival,
+                delay_minutes=delay_minutes,
+                is_delayed=is_delayed
             )
-
             db.add(new_flight)
             added_count += 1
-
         db.commit()
-        print(f"\nSuccessfully added {added_count} flights")
-        print(f"Skipped {skipped_count} flights (duplicates or missing data)")
         
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data from API: {e}")

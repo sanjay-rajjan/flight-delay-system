@@ -28,12 +28,13 @@ class Flight(Base):
     arrival_airport_id = Column(Integer, ForeignKey("airports.id"))
     scheduled_departure = Column(DateTime)
     scheduled_arrival = Column(DateTime)
+    actual_departure = Column(DateTime, nullable=True)
+    actual_arrival = Column(DateTime, nullable=True)
+    delay_minutes = Column(Integer, default=0)
+    is_delayed = Column(Integer, default=0)
 
     # relationships to airlines and airports tables
     airline = relationship("Airline")
     departure_airport = relationship("Airport", foreign_keys=[departure_airport_id])
     arrival_airport = relationship("Airport", foreign_keys=[arrival_airport_id])
-    
-
-
 

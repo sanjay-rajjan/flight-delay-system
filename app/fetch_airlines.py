@@ -8,11 +8,10 @@ load_dotenv()
 API_KEY = os.getenv("AVIATIONSTACK_API_KEY")
 
 def fetch_airlines():
-    print("Starting airline data fetch")
     url = "http://api.aviationstack.com/v1/airlines"
     params = {
-        'access_key': API_KEY,
-        'limit': 100
+        "access_key": API_KEY,
+        "limit": 100
     }
     db = None
     
@@ -31,8 +30,8 @@ def fetch_airlines():
         skipped_count = 0
         
         for airline_data in airlines_data:
-            code = airline_data.get('iata_code')
-            name = airline_data.get('airline_name')
+            code = airline_data.get("iata_code")
+            name = airline_data.get("airline_name")
             if not code or not name:
                 skipped_count += 1
                 continue
@@ -42,11 +41,8 @@ def fetch_airlines():
                 continue
             new_airline = Airline(code=code, name=name)
             db.add(new_airline)
-            added_count += 1
-        
+            added_count += 1  
         db.commit()
-        print(f"\nSuccessfully added {added_count} airlines")
-        print(f"Skipped {skipped_count} airlines (duplicates or missing data)")
         
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data from API: {e}")
