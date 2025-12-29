@@ -47,6 +47,19 @@ class Flight(FlightBase):
     airline: Airline
     departure_airport: Airport
     arrival_airport: Airport
-
     class Config:
         from_attributes = True
+
+class FlightPredictionRequest(BaseModel):
+    airline_code: str
+    departure_airport_code: str
+    arrival_airport_code: str
+    scheduled_departure: datetime
+    class Config:
+        from_attributes = True
+
+class FlightPredictionResponse(BaseModel):
+    prediction: str
+    delay_probability: float
+    confidence: str
+

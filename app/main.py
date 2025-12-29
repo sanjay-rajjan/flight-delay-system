@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Airport, Airline, Flight
 from app import schemas
+from app.prediction import predict_delay
 
 app = FastAPI(title="Flight Delay Prediction System")
 
@@ -89,3 +90,10 @@ def create_flight(flight: schemas.FlightCreate, db: Session = Depends(get_db)):
     db.refresh(new_flight)
     return new_flight
 
+@app.post("/predict", response_model=schemas.FlightPredictionResponse)
+def predict_flight_delay(request: schemas.FlightPredictionRequest):
+    try:
+        prediction, probability, confidence = predict_delay(request.airline_code, request.departure_airport_code, request.arrival_airport_code, request.scheduled_departure)
+        return schemas.FlightPredictionResponse(prediction=prediction, probability=probability, confidence=confidence)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
