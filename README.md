@@ -3,7 +3,7 @@
 API that predicts flight delays with 85.7% accuracy by analyzing historical patterns, real time weather data, and airline performance metrics.
 
 Flight delay predictions are made from multiple sources:
-- Analyzes 1,000+ flight, airline, and airport data from to identify delay patterns by airline and route
+- Analyzes 1,000+ flight, airline, and airport data to identify delay patterns by airline and route
 - Real time weather data from OpenWeatherMap API
 - Considers departure time, day of week, and seasonal patterns
 

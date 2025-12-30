@@ -2,16 +2,19 @@
 venv/
 
 # Python cache
-__pycache__/
-*.py[cod]
+__pychache__/
+*.pyc
+
+# Data and model files
+*.csv
+*.pkl
 
 # Environment variables
 .env
 
+# Version control
+.git/
+.gitignore
+
 # Mac files
 .DS_Store
-
-# Model and data files
-data/
-*.csv
-*.pkl

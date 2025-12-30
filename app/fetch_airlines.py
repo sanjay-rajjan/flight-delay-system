@@ -10,9 +10,7 @@ API_KEY = os.getenv("AVIATIONSTACK_API_KEY")
 def fetch_airlines():
     url = "http://api.aviationstack.com/v1/airlines"
     params = {
-        "access_key": API_KEY,
-        "limit": 100
-    }
+        "access_key": API_KEY, "limit": 100}
     db = None
     
     try:
@@ -31,6 +29,7 @@ def fetch_airlines():
         
         for airline_data in airlines_data:
             code = airline_data.get("iata_code")
+            icao_code = airline_data.get("icao_code")
             name = airline_data.get("airline_name")
             if not code or not name:
                 skipped_count += 1
@@ -39,7 +38,7 @@ def fetch_airlines():
             if existing:
                 skipped_count += 1
                 continue
-            new_airline = Airline(code=code, name=name)
+            new_airline = Airline(code=code, icao_code=icao_code, name=name)
             db.add(new_airline)
             added_count += 1  
         db.commit()

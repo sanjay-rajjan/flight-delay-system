@@ -7,6 +7,7 @@ class Airport(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String, unique=True, index=True)
+    icao_code = Column(String, index=True)
     name = Column(String)
     city = Column(String)
     country = Column(String)
@@ -16,6 +17,7 @@ class Airline(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String, unique=True, index=True)
+    icao_code = Column(String, index=True)
     name = Column(String)
 
 class Flight(Base):

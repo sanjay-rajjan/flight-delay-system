@@ -21,7 +21,6 @@ def get_weather_for_airport(airport_code, db):
     try:
         response = requests.get(url, params=params, timeout=10)
         data = response.json()
-
         weather = {
             "temperature": data["main"]["temp"],
             "feels_like": data["main"]["feels_like"],

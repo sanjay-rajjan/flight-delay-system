@@ -3,6 +3,7 @@ from datetime import datetime
 
 class AirportBase(BaseModel):
     code: str
+    icao_code: str | None = None
     name: str
     city: str
     country: str
@@ -17,6 +18,7 @@ class Airport(AirportBase):
 
 class AirlineBase(BaseModel):
     code: str
+    icao_code: str | None = None
     name: str
 
 class AirlineCreate(AirlineBase):
@@ -60,6 +62,5 @@ class FlightPredictionRequest(BaseModel):
 
 class FlightPredictionResponse(BaseModel):
     prediction: str
-    delay_probability: float
+    probability: float
     confidence: str
-
