@@ -20,7 +20,7 @@ The Random Forest classifier model implemented for predictions is trained on 14 
 - scikit-learn
 - pandas
 
-**External APIs:**
+**External Data:**
 - AviationStack API
 - Kaggle Flight Delay Dataset
 - OpenWeather API
